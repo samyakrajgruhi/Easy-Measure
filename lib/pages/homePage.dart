@@ -15,6 +15,20 @@ class HomePage extends StatelessWidget {
       'Shakshi Patel',
       'Guljari Prasad',
       'Harshita Ben',
+      'Anjali Sharma',
+      'Priya Singh',
+      'Meera Reddy',
+      'Sunita Gupta',
+      'Rekha Joshi',
+      'Pooja Verma',
+      'Divya Nair',
+      'Lakshmi Iyer',
+      'Radha Pillai',
+      'Geeta Devi',
+      'Shalini Rao',
+      'Usha Menon',
+      'Vidya Kulkarni',
+      'Deepa Mishra',
     ];
 
     names.sort((a, b) => a.compareTo(b));
@@ -80,8 +94,8 @@ class HomePage extends StatelessWidget {
             MaterialPageRoute(builder: (context) => const AddCustomerPage()),
           );
         },
-        backgroundColor: appBarColor,
-        child: const Icon(Icons.add, color: textPrimary,),
+        backgroundColor: inputField,
+        child: const Icon(Icons.add, color: textSecondary, size: 32),
       ),
     );
   }

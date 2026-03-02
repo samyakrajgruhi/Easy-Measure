@@ -1,7 +1,6 @@
 import 'package:easymeasure/pages/homePage.dart';
 import 'package:easymeasure/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:easymeasure/main.dart';
 
 class FlashScreen extends StatefulWidget {
   const FlashScreen({super.key});
