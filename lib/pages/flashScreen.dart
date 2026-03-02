@@ -1,4 +1,5 @@
 import 'package:easymeasure/pages/homePage.dart';
+import 'package:easymeasure/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:easymeasure/main.dart';
 
@@ -29,7 +30,7 @@ class _FlashScreenState extends State<FlashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: textPrimary,
       body: Center(
         child: Container(
           width: 200,
@@ -44,7 +45,7 @@ class _FlashScreenState extends State<FlashScreen> {
                     style: TextStyle(
                       color: Colors.green[700],
                       fontSize: 60,
-                      
+
                       fontFamily: 'Jua',
                     ),
                   ),
@@ -61,7 +62,7 @@ class _FlashScreenState extends State<FlashScreen> {
                 style: TextStyle(
                   color: Colors.green[300],
                   fontSize: 60,
-                  
+
                   fontFamily: 'Jua',
                 ),
               ),
