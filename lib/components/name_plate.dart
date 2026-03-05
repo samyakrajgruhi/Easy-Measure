@@ -4,12 +4,17 @@ import 'package:easymeasure/theme/theme.dart';
 class NamePlate extends StatelessWidget {
   final String name;
   final VoidCallback onTap;
+  final IconData? icon;
 
-  const NamePlate({super.key, required this.name, required this.onTap});
+  const NamePlate({
+    super.key,
+    required this.name,
+    required this.onTap,
+    this.icon,
+  });
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -20,13 +25,22 @@ class NamePlate extends StatelessWidget {
           color: appBarColor,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Text(
-          name,
-          style: TextStyle(
-            color: textPrimary,
-            fontWeight: FontWeight.w600,
-            fontSize: 20,
-          ),
+        child: Row(
+          mainAxisAlignment: icon != null
+              ? MainAxisAlignment.center
+              : MainAxisAlignment.start,
+          spacing: 8,
+          children: [
+            if (icon != null) Icon(icon, color: textPrimary, size: 20),
+            Text(
+              name,
+              style: TextStyle(
+                color: textPrimary,
+                fontWeight: FontWeight.w600,
+                fontSize: 20,
+              ),
+            ),
+          ],
         ),
       ),
     );

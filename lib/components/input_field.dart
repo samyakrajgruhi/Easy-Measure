@@ -6,6 +6,7 @@ class InputField extends StatelessWidget {
   final String hintText;
   final TextInputType? keyboardType;
   final TextEditingController? controller;
+  final bool readOnly;
 
   const InputField({
     super.key,
@@ -13,6 +14,7 @@ class InputField extends StatelessWidget {
     this.hintText = 'Enter value',
     this.keyboardType,
     this.controller,
+    this.readOnly = false,
   });
 
   @override
@@ -32,6 +34,7 @@ class InputField extends StatelessWidget {
         TextField(
           controller: controller,
           keyboardType: keyboardType,
+          readOnly: readOnly,
           decoration: InputDecoration(
             hintText: hintText,
             hintStyle: TextStyle(color: textSecondary.withOpacity(0.6)),
