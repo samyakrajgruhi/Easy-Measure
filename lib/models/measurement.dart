@@ -33,6 +33,7 @@ class Measurement extends HiveObject {
     this.crotch,
     this.skirtLength,
     this.lowWaist,
+    this.customFields,
   });
 
   @HiveField(0)
@@ -123,4 +124,7 @@ class Measurement extends HiveObject {
 
   @HiveField(28)
   double? lowWaist;
+
+  @HiveField(29)
+  Map<String, String>? customFields;
 }

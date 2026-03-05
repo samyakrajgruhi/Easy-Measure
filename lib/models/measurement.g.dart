@@ -46,13 +46,14 @@ class MeasurementAdapter extends TypeAdapter<Measurement> {
       crotch: fields[26] as double?,
       skirtLength: fields[27] as double?,
       lowWaist: fields[28] as double?,
+      customFields: (fields[29] as Map?)?.cast<String, String>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, Measurement obj) {
     writer
-      ..writeByte(29)
+      ..writeByte(30)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -110,7 +111,9 @@ class MeasurementAdapter extends TypeAdapter<Measurement> {
       ..writeByte(27)
       ..write(obj.skirtLength)
       ..writeByte(28)
-      ..write(obj.lowWaist);
+      ..write(obj.lowWaist)
+      ..writeByte(29)
+      ..write(obj.customFields);
   }
 
   @override

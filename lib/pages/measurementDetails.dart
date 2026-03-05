@@ -48,6 +48,10 @@ class _MeasurementDetailsState extends State<MeasurementDetails> {
   late final Map<String, TextEditingController> _controllers;
   late final Map<String, String> _initialValues;
 
+  final List<String> _customFieldNames = [];
+  final Map<String, TextEditingController> _customControllers = {};
+  late Map<String, String> _initialCustomValues;
+
   bool _isEditing = false;
 
   String _fieldToInitialValue(String field) {
@@ -95,6 +99,65 @@ class _MeasurementDetailsState extends State<MeasurementDetails> {
       _controllers[field] = TextEditingController(text: value);
       _initialValues[field] = value;
     }
+
+    // Load custom fields
+    final saved = widget.measurement.customFields ?? {};
+    _initialCustomValues = {};
+    for (final entry in saved.entries) {
+      _customFieldNames.add(entry.key);
+      _customControllers[entry.key] = TextEditingController(text: entry.value);
+      _initialCustomValues[entry.key] = entry.value;
+    }
+  }
+
+  void _showAddCustomFieldDialog() {
+    final nameController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Add Custom Field'),
+        content: TextField(
+          controller: nameController,
+          autofocus: true,
+          textCapitalization: TextCapitalization.words,
+          decoration: const InputDecoration(
+            labelText: 'Field name',
+            hintText: 'e.g. Chest round',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              final name = nameController.text.trim();
+              if (name.isNotEmpty &&
+                  !_customFieldNames.contains(name) &&
+                  !upperBodyFields.contains(name) &&
+                  !lowerBodyFields.contains(name)) {
+                setState(() {
+                  _customFieldNames.add(name);
+                  _customControllers[name] = TextEditingController();
+                });
+              }
+              Navigator.pop(context);
+            },
+            child: const Text('Add'),
+          ),
+        ],
+      ),
+    ).then((_) => nameController.dispose());
+  }
+
+  void _removeCustomField(String name) {
+    setState(() {
+      _customFieldNames.remove(name);
+      _customControllers[name]?.dispose();
+      _customControllers.remove(name);
+      _initialCustomValues.remove(name);
+    });
   }
 
   double? _getValue(String field) {
@@ -131,6 +194,14 @@ class _MeasurementDetailsState extends State<MeasurementDetails> {
     m.crotch = _getValue("Crotch");
     m.skirtLength = _getValue("Skirt length");
     m.lowWaist = _getValue("Low waist");
+
+    // Save custom fields
+    final customFields = <String, String>{};
+    for (final name in _customFieldNames) {
+      customFields[name] = _customControllers[name]!.text.trim();
+    }
+    m.customFields = customFields.isNotEmpty ? customFields : null;
+
     m.save();
 
     // Update initial values so the save button hides after saving
@@ -138,6 +209,9 @@ class _MeasurementDetailsState extends State<MeasurementDetails> {
     for (final field in [...upperBodyFields, ...lowerBodyFields]) {
       _initialValues[field] = _controllers[field]!.text;
     }
+    _initialCustomValues = {
+      for (final n in _customFieldNames) n: _customControllers[n]!.text,
+    };
     setState(() => _isEditing = false);
   }
 
@@ -145,6 +219,9 @@ class _MeasurementDetailsState extends State<MeasurementDetails> {
   void dispose() {
     _titleController.dispose();
     for (final c in _controllers.values) {
+      c.dispose();
+    }
+    for (final c in _customControllers.values) {
       c.dispose();
     }
     super.dispose();
@@ -243,9 +320,70 @@ class _MeasurementDetailsState extends State<MeasurementDetails> {
                       ),
                     ),
                   ),
+
+                  if (_customFieldNames.isNotEmpty) ...[
+                    Divider(
+                      color: textSecondary.withOpacity(0.3),
+                      thickness: 1,
+                      height: 30,
+                    ),
+                    Text(
+                      "CUSTOM",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: textSecondary,
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    ...(_customFieldNames.map(
+                      (name) => Padding(
+                        padding: const EdgeInsets.only(bottom: 15),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Expanded(
+                              child: InputField(
+                                label: name,
+                                keyboardType: TextInputType.number,
+                                controller: _customControllers[name]!,
+                              ),
+                            ),
+                            if (_isEditing)
+                              IconButton(
+                                onPressed: () => _removeCustomField(name),
+                                icon: const Icon(Icons.close),
+                                color: Colors.red,
+                              ),
+                          ],
+                        ),
+                      ),
+                    )),
+                  ],
                 ],
               ),
             ),
+
+            if (_isEditing) ...[
+              const SizedBox(height: 10),
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: OutlinedButton.icon(
+                  onPressed: _showAddCustomFieldDialog,
+                  icon: const Icon(Icons.add),
+                  label: const Text(
+                    "Add Custom Field",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+            ],
 
             if (_isEditing) ...[
               const SizedBox(height: 15),
