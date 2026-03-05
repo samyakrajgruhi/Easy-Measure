@@ -5,12 +5,14 @@ class InputField extends StatelessWidget {
   final String label;
   final String hintText;
   final TextInputType? keyboardType;
+  final TextEditingController? controller;
 
   const InputField({
     super.key,
     required this.label,
     this.hintText = 'Enter value',
     this.keyboardType,
+    this.controller,
   });
 
   @override
@@ -28,6 +30,7 @@ class InputField extends StatelessWidget {
           ),
         ),
         TextField(
+          controller: controller,
           keyboardType: keyboardType,
           decoration: InputDecoration(
             hintText: hintText,

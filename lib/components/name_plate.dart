@@ -11,8 +11,9 @@ class NamePlate extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: implement build
     return GestureDetector(
-      onTap: () {},
+      onTap: onTap,
       child: Container(
+        width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
         margin: const EdgeInsets.only(bottom: 5),
         decoration: BoxDecoration(

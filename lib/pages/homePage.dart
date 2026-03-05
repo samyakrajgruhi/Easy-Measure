@@ -1,10 +1,33 @@
+import 'package:easymeasure/models/customer.dart';
+import 'package:easymeasure/services/storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:easymeasure/theme/theme.dart';
 import 'package:easymeasure/components/name_plate.dart';
 import 'package:easymeasure/pages/addCustomerPage.dart';
+import 'package:easymeasure/pages/customerDetails.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  List<Customer> _customers = [];
+
+  void _loadCustomers() {
+    setState(() {
+      _customers = getAllCustomers();
+      _customers.sort((a, b) => a.name.compareTo(b.name));
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCustomers();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,19 +94,33 @@ class HomePage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            Expanded(
-              child: ListView.builder(
-                itemCount: names.length,
-                itemBuilder: (context, index) {
-                  return NamePlate(
-                    name: names[index],
-                    onTap: () {
-                      print('Tapped on ${names[index]}');
-                    },
-                  );
-                },
-              ),
-            ),
+            _customers.isEmpty
+                ? Center(
+                    child: Text(
+                      'No customers yet',
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  )
+                : Expanded(
+                    child: ListView.builder(
+                      itemCount: _customers.length,
+                      itemBuilder: (context, index) {
+                        return NamePlate(
+                          name: _customers[index].name,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CustomerDetails(
+                                  customer: _customers[index],
+                                ),
+                              ),
+                            ).then((_) => _loadCustomers());
+                          },
+                        );
+                      },
+                    ),
+                  ),
           ],
         ),
       ),
@@ -92,7 +129,7 @@ class HomePage extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const AddCustomerPage()),
-          );
+          ).then((_) => _loadCustomers());
         },
         backgroundColor: inputField,
         child: const Icon(Icons.add, color: textSecondary, size: 32),
