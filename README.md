@@ -1,3 +1,5 @@
+![Easy-Measure](https://socialify.git.ci/samyakrajgruhi/Easy-Measure/image?font=Raleway&language=1&name=1&owner=1&pattern=Solid&theme=Dark)
+
 # ✂️ EasyMeasure
 
 **EasyMeasure** is a cross-platform Flutter application for tailors and dressmakers to manage customer profiles and store detailed body measurements — all offline, all in one place.
@@ -14,53 +16,6 @@
 - **Swipe to Delete** — Dismissible UI for removing customers and measurements with a confirmation dialog.
 - **Offline-First** — All data is persisted locally using Hive; no internet connection required.
 - **Cross-Platform** — Runs on Android, iOS, Web, Linux, macOS, and Windows.
-
----
-
-## Screenshots
-
-> _Add screenshots here once available._
-
----
-
-## Tech Stack
-
-| Layer | Technology |
-|---|---|
-| Framework | Flutter (Dart) |
-| Local Storage | [Hive](https://pub.dev/packages/hive) + [hive_flutter](https://pub.dev/packages/hive_flutter) |
-| Code Generation | [hive_generator](https://pub.dev/packages/hive_generator) + [build_runner](https://pub.dev/packages/build_runner) |
-| Unique IDs | [uuid](https://pub.dev/packages/uuid) |
-| Fuzzy Search | [fuzzy](https://pub.dev/packages/fuzzy) |
-| Icons | [cupertino_icons](https://pub.dev/packages/cupertino_icons) |
-| Linting | [flutter_lints](https://pub.dev/packages/flutter_lints) |
-
----
-
-## Measurement Fields
-
-### Upper Body
-| Field | Field |
-|---|---|
-| Full Length | Blouse Length |
-| Kurti Length | Shoulder |
-| Upper Bust | Bust Round |
-| Under Bust | Bust to Apex |
-| Apex | Waist Round |
-| Hip Round | Neck to Waist |
-| Neck to Hip | Sleeve Length |
-| Sleeve Hole | Biceps |
-| Arm Hole | |
-
-### Lower Body
-| Field | Field |
-|---|---|
-| Pant Length | Waist to Knee |
-| Thigh Round | Knee Round |
-| Ankle Round | Crotch |
-| Skirt Length | Low Waist |
-
-Custom fields can be added on the fly when creating or viewing a measurement.
 
 ---
 
@@ -148,16 +103,6 @@ This project uses `hive_generator` to generate type adapters for Hive models. Ru
 ```bash
 dart run build_runner build --delete-conflicting-outputs
 ```
-
----
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/your-feature`
-3. Commit your changes: `git commit -m 'Add your feature'`
-4. Push to the branch: `git push origin feature/your-feature`
-5. Open a Pull Request
 
 ---
 
