@@ -1,7 +1,9 @@
+import 'package:easymeasure/components/dismissible_plate.dart';
 import 'package:easymeasure/components/name_plate.dart';
 import 'package:easymeasure/models/customer.dart';
 import 'package:easymeasure/models/measurement.dart';
 import 'package:easymeasure/pages/addMeasurementPage.dart';
+import 'package:easymeasure/pages/measurementDetails.dart';
 import 'package:flutter/material.dart';
 import 'package:easymeasure/theme/theme.dart';
 import 'package:uuid/uuid.dart';
@@ -40,6 +42,13 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
     bool saved = _saveCustomerIfNeeded();
     if (!saved) return;
     Navigator.pop(context);
+  }
+
+  void _deleteMeasurement(Measurement measurement) {
+    deleteMeasurement(_customerId, measurement.id);
+    setState(() {
+      _measurements.remove(measurement);
+    });
   }
 
   bool _saveCustomerIfNeeded() {
@@ -146,27 +155,42 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
             ),
 
             Divider(color: textSecondary.withOpacity(0.3), thickness: 1),
-
-            _measurements.isEmpty
-                ? Text(
-                    "No measurements Saved",
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: textSecondary.withOpacity(0.7),
-                      fontWeight: FontWeight.w500,
+            if (_measurements.isEmpty) ...[
+              Center(
+                child: Text(
+                  "No Measurements Saved",
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: textSecondary.withOpacity(0.7),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ] else
+              ..._measurements
+                  .map(
+                    (measurement) => DismissiblePlate(
+                      id: measurement.id,
+                      childWidget: NamePlate(
+                        name: measurement.title,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  MeasurementDetails(measurement: measurement),
+                            ),
+                          );
+                        },
+                      ),
+                      onDismissed: () => _deleteMeasurement(measurement),
+                      confirmTitle: "Delete Measurement",
+                      confirmMessage:
+                          "Are you sure you want to delete this measurement?",
+                      dismissSnackBarMessage: "${measurement.title} deleted",
                     ),
                   )
-                : ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: _measurements.length,
-                    itemBuilder: (context, index) {
-                      return NamePlate(
-                        name: _measurements[index].title,
-                        onTap: () {},
-                      );
-                    },
-                  ),
+                  .toList(),
 
             SizedBox(
               width: 56,

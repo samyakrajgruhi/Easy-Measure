@@ -1,3 +1,4 @@
+import 'package:easymeasure/components/dismissible_plate.dart';
 import 'package:easymeasure/models/customer.dart';
 import 'package:easymeasure/services/storage_service.dart';
 import 'package:flutter/material.dart';
@@ -105,19 +106,42 @@ class _HomePageState extends State<HomePage> {
                     child: ListView.builder(
                       itemCount: _customers.length,
                       itemBuilder: (context, index) {
-                        return NamePlate(
-                          name: _customers[index].name,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => CustomerDetails(
-                                  customer: _customers[index],
+                        return DismissiblePlate(
+                          childWidget: NamePlate(
+                            name: _customers[index].name,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => CustomerDetails(
+                                    customer: _customers[index],
+                                  ),
                                 ),
-                              ),
-                            ).then((_) => _loadCustomers());
-                          },
+                              ).then((_) => _loadCustomers());
+                            },
+                          ),
+                          onDismissed: () =>
+                              deleteCustomer(_customers[index].id),
+                          confirmTitle: "Delete ${_customers[index].name}",
+                          confirmMessage:
+                              "All Saved Measurements for ${_customers[index].name} will be lost. Confirm ?",
+                          dismissSnackBarMessage:
+                              "${_customers[index].name} Deleted.",
+                          id: _customers[index].id,
                         );
+                        // return NamePlate(
+                        //   name: _customers[index].name,
+                        //   onTap: () {
+                        //     Navigator.push(
+                        //       context,
+                        //       MaterialPageRoute(
+                        //         builder: (context) => CustomerDetails(
+                        //           customer: _customers[index],
+                        //         ),
+                        //       ),
+                        //     ).then((_) => _loadCustomers());
+                        //   },
+                        // );
                       },
                     ),
                   ),
