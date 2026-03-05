@@ -17,7 +17,7 @@ class _FlashScreenState extends State<FlashScreen> {
   }
 
   _navigateToHome() async {
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 1));
     if (mounted) {
       Navigator.pushReplacement(
         context,
@@ -29,7 +29,7 @@ class _FlashScreenState extends State<FlashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: textPrimary,
+      backgroundColor: const Color.fromARGB(255, 33, 33, 33),
       body: Center(
         child: Container(
           width: 200,
@@ -53,6 +53,7 @@ class _FlashScreenState extends State<FlashScreen> {
                     'lib/images/icons/content_cut.png',
                     width: 72,
                     height: 72,
+                    color: textPrimary,
                   ),
                 ],
               ),

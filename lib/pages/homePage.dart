@@ -1,4 +1,5 @@
 import 'package:easymeasure/components/dismissible_plate.dart';
+import 'package:fuzzy/fuzzy.dart';
 import 'package:easymeasure/models/customer.dart';
 import 'package:easymeasure/services/storage_service.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String _searchQuery = '';
+
   List<Customer> _customers = [];
 
   void _loadCustomers() {
@@ -30,32 +33,23 @@ class _HomePageState extends State<HomePage> {
     _loadCustomers();
   }
 
+  List<Customer> _getFilteredCustomers() {
+    if (_searchQuery.isEmpty) return _customers;
+
+    final fuse = Fuzzy<Customer>(
+      _customers,
+      options: FuzzyOptions(
+        keys: [WeightedKey(name: 'name', getter: (c) => c.name, weight: 1)],
+        threshold: 0.4,
+      ),
+    );
+
+    return fuse.search(_searchQuery).map((r) => r.item).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<String> names = [
-      'Nirmala Rajgruhi',
-      'Kalpana Kumari',
-      'Kavita Kumari',
-      'Shakshi Patel',
-      'Guljari Prasad',
-      'Harshita Ben',
-      'Anjali Sharma',
-      'Priya Singh',
-      'Meera Reddy',
-      'Sunita Gupta',
-      'Rekha Joshi',
-      'Pooja Verma',
-      'Divya Nair',
-      'Lakshmi Iyer',
-      'Radha Pillai',
-      'Geeta Devi',
-      'Shalini Rao',
-      'Usha Menon',
-      'Vidya Kulkarni',
-      'Deepa Mishra',
-    ];
-
-    names.sort((a, b) => a.compareTo(b));
+    final displayedCustomers = _getFilteredCustomers();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: appBarColor,
@@ -93,58 +87,54 @@ class _HomePageState extends State<HomePage> {
                   vertical: 12,
                 ),
               ),
+              onChanged: (value) => setState(() {
+                _searchQuery = value;
+              }),
             ),
             const SizedBox(height: 16),
-            _customers.isEmpty
-                ? Center(
-                    child: Text(
-                      'No customers yet',
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  )
-                : Expanded(
-                    child: ListView.builder(
-                      itemCount: _customers.length,
-                      itemBuilder: (context, index) {
-                        return DismissiblePlate(
-                          childWidget: NamePlate(
-                            name: _customers[index].name,
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => CustomerDetails(
-                                    customer: _customers[index],
-                                  ),
-                                ),
-                              ).then((_) => _loadCustomers());
-                            },
-                          ),
-                          onDismissed: () =>
-                              deleteCustomer(_customers[index].id),
-                          confirmTitle: "Delete ${_customers[index].name}",
-                          confirmMessage:
-                              "All Saved Measurements for ${_customers[index].name} will be lost. Confirm ?",
-                          dismissSnackBarMessage:
-                              "${_customers[index].name} Deleted.",
-                          id: _customers[index].id,
-                        );
-                        // return NamePlate(
-                        //   name: _customers[index].name,
-                        //   onTap: () {
-                        //     Navigator.push(
-                        //       context,
-                        //       MaterialPageRoute(
-                        //         builder: (context) => CustomerDetails(
-                        //           customer: _customers[index],
-                        //         ),
-                        //       ),
-                        //     ).then((_) => _loadCustomers());
-                        //   },
-                        // );
-                      },
-                    ),
-                  ),
+            if (_customers.isEmpty)
+              Center(
+                child: Text(
+                  'No customers yet',
+                  style: TextStyle(color: Colors.grey),
+                ),
+              )
+            else if (displayedCustomers.isEmpty)
+              Center(
+                child: Text(
+                  'No results found',
+                  style: TextStyle(color: Colors.grey),
+                ),
+              )
+            else
+              Expanded(
+                child: ListView.builder(
+                  itemCount: displayedCustomers.length,
+                  itemBuilder: (context, index) {
+                    final customer = displayedCustomers[index];
+                    return DismissiblePlate(
+                      childWidget: NamePlate(
+                        name: customer.name,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  CustomerDetails(customer: customer),
+                            ),
+                          ).then((_) => _loadCustomers());
+                        },
+                      ),
+                      onDismissed: () => deleteCustomer(customer.id),
+                      confirmTitle: "Delete ${customer.name}",
+                      confirmMessage:
+                          "All Saved Measurements for ${customer.name} will be lost. Confirm ?",
+                      dismissSnackBarMessage: "${customer.name} Deleted.",
+                      id: customer.id,
+                    );
+                  },
+                ),
+              ),
           ],
         ),
       ),
